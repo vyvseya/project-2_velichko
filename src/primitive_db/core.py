@@ -1,8 +1,10 @@
+from primitive_db.decorators import confirm_action, handle_db_errors, log_time
 from primitive_db.utils import load_table_data
 
 VALID_TYPES = {"int", "str", "bool"}
 
 
+@handle_db_errors
 def create_table(metadata, table_name, columns):
     """создает таблицу с проверокой столбцов
     и добавляет айди"""
@@ -46,6 +48,8 @@ def create_table(metadata, table_name, columns):
     return metadata
 
 
+@handle_db_errors
+@confirm_action("удаление таблицы")
 def drop_table(metadata, table_name):
     """удаляет таблицу из мет, если онаа сущ"""
     if table_name not in metadata:
@@ -59,6 +63,8 @@ def drop_table(metadata, table_name):
     return metadata
 
 
+@handle_db_errors
+@log_time
 def insert(metadata, table_name, values):
     """добавляет запись в таблицу с проверкой типов и генерацией ID"""
     if table_name not in metadata:
@@ -100,6 +106,8 @@ def insert(metadata, table_name, values):
     return table_data
 
 
+@handle_db_errors
+@log_time
 def select(table_data, where_clause=None):
     """возвращает все записи таблицы или записи, подходящие под условие"""
     if where_clause is None:
@@ -120,6 +128,8 @@ def update(table_data, set_clause, where_clause):
     return table_data
 
 
+@handle_db_errors
+@confirm_action("удаление записей")
 def delete(table_data, where_clause):
     """удаляет записи, соответствующие заданному условию"""
     if not where_clause:

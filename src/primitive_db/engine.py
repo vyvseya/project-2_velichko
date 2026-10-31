@@ -1,3 +1,4 @@
+import json
 import re
 import shlex
 
@@ -5,6 +6,7 @@ import prompt
 from prettytable import PrettyTable
 
 from primitive_db.core import create_table, delete, drop_table, insert, select, update
+from primitive_db.decorators import create_cacher
 from primitive_db.parser import parse_condition, parse_values
 from primitive_db.utils import (
     delete_table_data,
@@ -54,6 +56,8 @@ def run():
     """запускает цикл команд и сохраняет изменения таблиц в json"""
     print_help()
 
+    cache_result = create_cacher()
+
     while True:
         metadata = load_metadata(METADATA_FILE)
         user_input = prompt.string("\n>>>Введите команду: ")
@@ -85,11 +89,14 @@ def run():
                     continue
 
                 table_name = args[0]
-                table_exists = table_name in metadata
 
-                drop_table(metadata, table_name)
+                if table_name not in metadata:
+                    print(f'Ошибка: Таблица "{table_name}" не существует.')
+                    continue
 
-                if table_exists:
+                result = drop_table(metadata, table_name)
+
+                if result is not None:
                     delete_table_data(table_name)
 
             case "list_tables":
@@ -171,7 +178,17 @@ def run():
                         continue
 
                 table_data = load_table_data(table_name)
-                results = select(table_data, where_clause)
+
+                cache_key = (
+                    table_name,
+                    json.dumps(where_clause, sort_keys=True),
+                    json.dumps(table_data, sort_keys=True),
+                )
+
+                results = cache_result(
+                    cache_key,
+                    lambda: select(table_data, where_clause),
+                )
 
                 table = PrettyTable()
                 table.field_names = [
@@ -292,8 +309,12 @@ def run():
 
                 deleted_ids = [row["ID"] for row in matching_rows]
 
-                delete(table_data, where_clause)
-                save_table_data(table_name, table_data)
+                result = delete(table_data, where_clause)
+
+                if result is None:
+                    continue
+
+                save_table_data(table_name, result)
 
                 for record_id in deleted_ids:
                     print(
