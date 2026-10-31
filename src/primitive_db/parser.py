@@ -9,7 +9,7 @@ def parse_value(value):
     if len(value) >= 2 and value.startswith('"') and value.endswith('"'):
         result = value[1:-1]
 
-        if not result:
+        if not result.strip():
             raise ValueError("Пустая строка недопустима.")
 
         return result

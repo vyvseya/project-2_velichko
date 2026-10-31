@@ -10,6 +10,10 @@ def create_table(metadata, table_name, columns):
         print(f'Ошибка: Таблица "{table_name}" уже существует.')
         return metadata
 
+    if not table_name.isidentifier():
+        print(f"Некорректное имя таблицы: {table_name}. Попробуйте снова.")
+        return metadata
+
     if not columns:
         print("Некорректное значение: отсутствуют столбцы. Попробуйте снова.")
         return metadata
