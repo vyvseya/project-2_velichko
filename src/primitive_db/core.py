@@ -5,8 +5,8 @@ from primitive_db.utils import load_table_data
 
 @handle_db_errors
 def create_table(metadata, table_name, columns):
-    """создает таблицу с проверокой столбцов
-    и добавляет айди"""
+    """cоздает таблицу с проверкой столбцов
+    и добавляет ID"""
     if table_name in metadata:
         print(f'Ошибка: Таблица "{table_name}" уже существует.')
         return metadata
@@ -25,7 +25,7 @@ def create_table(metadata, table_name, columns):
     for column in columns:
         name, separator, data_type = column.partition(":")
 
-        if not name or separator != ":" or data_type not in VALID_TYPES:
+        if not name.isidentifier() or separator != ":" or data_type not in VALID_TYPES:
             print(f"Некорректное значение: {column}. Попробуйте снова.")
             return metadata
 
@@ -50,7 +50,7 @@ def create_table(metadata, table_name, columns):
 @handle_db_errors
 @confirm_action("удаление таблицы")
 def drop_table(metadata, table_name):
-    """удаляет таблицу из мет, если онаа сущ"""
+    """удаляет описание таблицы из методанных"""
     if table_name not in metadata:
         print(f'Ошибка: Таблица "{table_name}" не существует.')
         return metadata

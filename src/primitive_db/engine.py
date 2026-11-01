@@ -52,7 +52,7 @@ def print_help():
 
 
 def run():
-    """запускает цикл команд и сохраняет изменения таблиц в json"""
+    """запускает цикл команд и сохраняет изменения в json"""
     print_help()
 
     cache_result = create_cacher()
@@ -254,8 +254,12 @@ def run():
 
                 updated_ids = [row["ID"] for row in matching_rows]
 
-                update(table_data, set_clause, where_clause)
-                save_table_data(table_name, table_data)
+                result = update(table_data, set_clause, where_clause)
+
+                if result is None:
+                    continue
+
+                save_table_data(table_name, result)
 
                 for record_id in updated_ids:
                     print(

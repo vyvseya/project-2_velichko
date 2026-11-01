@@ -3,11 +3,11 @@ from functools import wraps
 
 
 def handle_db_errors(func):
-    """Перехватывает ошибки базы данных и выводит понятные сообщения."""
+    """перехватывает ошибки базы данных и выводит понятные сообщения"""
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        """Вызывает функцию и обрабатывает возможные исключения."""
+        """вызывает функцию и обрабатывает возможные исключения"""
         try:
             return func(*args, **kwargs)
         except FileNotFoundError:
@@ -72,7 +72,7 @@ def create_cacher():
     cache = {}
 
     def cache_result(key, value_func):
-        """возвращает результат из кэша и сохраняет его"""
+        """возвращает результат из кэша (или вычисляет) и сохраняет его"""
         if key not in cache:
             cache[key] = value_func()
 
