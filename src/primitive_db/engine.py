@@ -5,6 +5,7 @@ import shlex
 import prompt
 from prettytable import PrettyTable
 
+from primitive_db.constants import METADATA_FILE, PYTHON_TYPES
 from primitive_db.core import create_table, delete, drop_table, insert, select, update
 from primitive_db.decorators import create_cacher
 from primitive_db.parser import parse_condition, parse_values
@@ -15,8 +16,6 @@ from primitive_db.utils import (
     save_metadata,
     save_table_data,
 )
-
-METADATA_FILE = "db_meta.json"
 
 
 def print_help():
@@ -166,11 +165,9 @@ def run():
                         )
                     }
 
-                    expected_types = {"int": int, "str": str, "bool": bool}
-
                     if (
                         column_name not in column_types
-                        or type(value) is not expected_types[column_types[column_name]]
+                        or type(value) is not PYTHON_TYPES[column_types[column_name]]
                     ):
                         print(
                             f"Некорректное значение: {raw_condition}. Попробуйте снова."
@@ -229,7 +226,6 @@ def run():
                 column_types = dict(
                     column.split(":") for column in metadata[table_name]
                 )
-                valid_types = {"int": int, "str": str, "bool": bool}
 
                 set_column, set_value = next(iter(set_clause.items()))
                 where_column, where_value = next(iter(where_clause.items()))
@@ -243,8 +239,8 @@ def run():
                     continue
 
                 if (
-                    type(set_value) is not valid_types[column_types[set_column]]
-                    or type(where_value) is not valid_types[column_types[where_column]]
+                    type(set_value) is not PYTHON_TYPES[column_types[set_column]]
+                    or type(where_value) is not PYTHON_TYPES[column_types[where_column]]
                 ):
                     print(f"Некорректное значение: {user_input}. Попробуйте снова.")
                     continue
@@ -292,13 +288,12 @@ def run():
                 column_types = dict(
                     column.split(":") for column in metadata[table_name]
                 )
-                valid_types = {"int": int, "str": str, "bool": bool}
 
                 column_name, value = next(iter(where_clause.items()))
 
                 if (
                     column_name not in column_types
-                    or type(value) is not valid_types[column_types[column_name]]
+                    or type(value) is not PYTHON_TYPES[column_types[column_name]]
                 ):
                     print(f"Некорректное значение: {raw_where}. Попробуйте снова.")
                     continue
