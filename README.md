@@ -19,6 +19,37 @@ uv run database
 database
 ```
 
+### Запуск через Make
+
+При наличии GNU Make и установленного uv можно использовать:
+
+```bash
+make install
+make run
+```
+
+Проверка качества кода:
+
+```bash
+make lint
+```
+
+Запуск автоматического CRUD-теста:
+
+```bash
+make test
+```
+
+Если GNU Make недоступен (например, в обычном PowerShell на Windows), используйте эквивалентные команды:
+
+```powershell
+uv sync
+uv run database
+uv run ruff check .
+uv run ruff format --check .
+uv run python tests/test_database.py
+```
+
 ## Управление таблицами
 
 Доступны следующие команды:

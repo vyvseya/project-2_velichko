@@ -1,7 +1,6 @@
+from primitive_db.constants import PYTHON_TYPES, VALID_TYPES
 from primitive_db.decorators import confirm_action, handle_db_errors, log_time
 from primitive_db.utils import load_table_data
-
-VALID_TYPES = {"int", "str", "bool"}
 
 
 @handle_db_errors
@@ -77,12 +76,11 @@ def insert(metadata, table_name, values):
         print("Некорректное количество значений. Попробуйте снова.")
         return None
 
-    valid_types = {"int": int, "str": str, "bool": bool}
     record = {}
 
     for column, value in zip(columns, values):
         name, data_type = column.split(":")
-        expected_type = valid_types[data_type]
+        expected_type = PYTHON_TYPES[data_type]
 
         if type(value) is not expected_type:
             print(f"Некорректное значение: {value}. Попробуйте снова.")
