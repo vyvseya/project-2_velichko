@@ -120,6 +120,7 @@ def select(table_data, where_clause=None):
     ]
 
 
+@handle_db_errors
 def update(table_data, set_clause, where_clause):
     """обновляет поля записей, соответствующих заданному условию"""
     for row in select(table_data, where_clause):

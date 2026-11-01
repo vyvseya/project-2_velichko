@@ -190,6 +190,9 @@ def run():
                     lambda: select(table_data, where_clause),
                 )
 
+                if results is None:
+                    continue
+
                 table = PrettyTable()
                 table.field_names = [
                     column.split(":")[0] for column in metadata[table_name]
